@@ -12,9 +12,9 @@ export const contextMock = (): Context => ({
   identity: null,
   clientContext: null,
   getRemainingTimeInMillis: () => 0,
-  done: (error?: Error, result?: any) => {},
-  fail: (error: Error | string)=> {},
-  succeed: (messageOrObject: any)=> {},
+  done: () => { },
+  fail: () => { },
+  succeed: () => { },
 });
 
 export const apiGatewayContext = (): APIGatewayEventRequestContext => ({
@@ -54,16 +54,16 @@ export const apiGatewayContext = (): APIGatewayEventRequestContext => ({
   routeKey: null,
 })
 
-export const apiGatewayEvent = ():APIGatewayProxyEvent => ({
+export const apiGatewayEvent = (): APIGatewayProxyEvent => ({
   body: '',
   httpMethod: 'GET',
   headers: {},
   queryStringParameters: {},
-  multiValueHeaders: { },
+  multiValueHeaders: {},
   isBase64Encoded: false,
   path: '',
-  pathParameters: { },
-  multiValueQueryStringParameters: { },
+  pathParameters: {},
+  multiValueQueryStringParameters: {},
   stageVariables: {},
   requestContext: apiGatewayContext(),
   resource: ''
