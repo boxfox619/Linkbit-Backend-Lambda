@@ -1,0 +1,19 @@
+{
+    "extends": [
+        "tslint:recommended",
+        "tslint-config-prettier"
+    ],
+    "rules": {
+        "no-floating-promises": true,
+        "quotemark": [true, "double", "jsx-double", "avoid-escape"],
+        "semicolon": [true, "never"],
+        "ordered-imports": false,
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "always",
+                "singleline": "never"
+            }
+        ]
+    }
+}

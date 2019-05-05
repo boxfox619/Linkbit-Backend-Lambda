@@ -1,5 +1,6 @@
 const path = require('path');
 const slsw = require('serverless-webpack');
+const TSLintPlugin = require('tslint-webpack-plugin');
 
 module.exports = {
   entry: slsw.lib.entries,
@@ -19,4 +20,9 @@ module.exports = {
       { test: /\.tsx?$/, loader: 'ts-loader' },
     ],
   },
+  plugins: [
+      new TSLintPlugin({
+          files: ['./**/*.ts']
+      })
+  ]
 };
