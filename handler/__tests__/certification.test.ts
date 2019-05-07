@@ -1,11 +1,11 @@
 import { getCertText } from '../certification';
-import { apiGatewayEvent, contextMock } from '../../util/mock';
+import { apiGatewayEventMock, contextMock } from '../../util/mock';
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import EthCrypto from 'eth-crypto';
 
 describe('certification handler', () => {
     it('should return status code 200 with token', async () => {
-        const event: APIGatewayProxyEvent = apiGatewayEvent();
+        const event: APIGatewayProxyEvent = apiGatewayEventMock();
         const context: Context = contextMock();
         const keyPair = EthCrypto.createIdentity();
         event.queryStringParameters = { 'publicKey': keyPair.publicKey };
