@@ -1,6 +1,12 @@
 import * as Sequelize from 'sequelize';
+import { Model } from 'sequelize';
 
-export default (sequelize: Sequelize.Sequelize) => sequelize.define('link', LinkTable);
+class Link extends Model { }
+
+export default (sequelize: Sequelize.Sequelize) => {
+  Link.init(LinkTable, {sequelize, modelName: 'link'});
+  return Link;
+}
 
 export const LinkTable = {
     linkaddress: {

@@ -1,14 +1,21 @@
 import * as Sequelize from 'sequelize';
+import { Model } from 'sequelize';
 
-export default (sequelize: Sequelize.Sequelize) => sequelize.define('address', AddressTable);
+class Address extends Model { }
+
+export default (sequelize: Sequelize.Sequelize) => {
+  Address.init(AddressTable, { sequelize, modelName: 'address' });
+  return Address;
+}
 
 export const AddressTable = {
-    linkaddress: {
-      type: Sequelize.STRING,
-      allowNull: false
-    },
-    owner_public_key: {
-      type: Sequelize.STRING,
-      allowNull: false
-    }
+  linkaddress: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    primaryKey: true
+  },
+  owner_address: {
+    type: Sequelize.STRING,
+    allowNull: false
+  }
 }

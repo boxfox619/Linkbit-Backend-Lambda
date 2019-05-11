@@ -1,6 +1,6 @@
 create table address(
 linkaddress varchar(300) PRIMARY KEY,
-owner_public_key varchar(300) NOT NULL
+owner_address varchar(300) NOT NULL
 );
 
 create table link(
