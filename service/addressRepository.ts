@@ -3,10 +3,10 @@ import { AddressUsecase } from '../domain/address';
 
 export class AddressRepository implements AddressUsecase {
 
-    createLink = async (linkAddress: string, ownerAddress: any) => {
+    createAddress = async (linkAddress: string, ownerAddress: any) => {
         const isExist = await this.checkExistLink(linkAddress);
         if (isExist) throw new Error(`already exist link ${linkAddress}`);
-        db.address.create({
+        await db.address.create({
             linkAddress,
             owner_address: ownerAddress
         });

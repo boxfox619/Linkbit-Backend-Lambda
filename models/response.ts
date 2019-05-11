@@ -1,3 +1,13 @@
+import { APIGatewayProxyResult } from "aws-lambda";
+
+export const response = (statusCode: number, body: object | string = ''): APIGatewayProxyResult => {
+  let bodyData = body;
+  if (typeof body === 'string') {
+    bodyData = { message: body };
+  }
+  return { statusCode, body: JSON.stringify(bodyData, null, 2) }
+}
+
 export const missingParameters = (queryParams: string[] = [], pathParams: string[] = [], bodyParams: string[] = []) => {
   const messages: string[] = [];
   if (queryParams.length > 0) {

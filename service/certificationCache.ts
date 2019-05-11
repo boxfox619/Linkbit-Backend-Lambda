@@ -11,8 +11,7 @@ export const createCertText = async (publicKey: string) => {
     return encryptedText;
 }
 
-export const checkValidation = (publicKey: string, decryptedText: string) => {
-    const address = ethCrypto.publicKey.toAddress(publicKey);
+export const checkValidation = (address: string, decryptedText: string) => {
     const originalText = cache[address];
     const valid = !!originalText && originalText === decryptedText;
     cache[address] = undefined;

@@ -1,30 +1,54 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 import * as cert from '../service/certificationCache';
-import { middleware, RequiredParams } from '../util/middleware';
-import db from '../models';
+import { middleware } from '../util/middleware';
+import { AddressRepository } from '../service/addressRepository';
+import { response } from '../models';
 
-const requiredParam: RequiredParams = {
-  queryParams: ['publicKey', 'token', 'linkaddress', 'accountaddress']
-}
+const addressRepo = new AddressRepository();
 
-export const getCertText: APIGatewayProxyHandler = middleware(
+export const getLinkAddress: APIGatewayProxyHandler = middleware(
   async (param) => {
-    const publicKey = param.queryParams.publicKey;
+    const linkaddress = param.queryParams.linkaddress;
+    const symbol = param.queryParams.symbol;
+    try {
+      const address = await addressRepo.getAddress(linkaddress, symbol);
+      return response(200, { address });
+    } catch (e) {
+      return response(404, e.message);
+    }
+  },
+  { body: ['linkaddress', 'symbol'] }
+)
+
+export const createAddress: APIGatewayProxyHandler = middleware(
+  async (param) => {
+    const ownerAddress = param.body.ownerAddress;
+    const token = param.body.token;
+    const linkaddress = param.body.linkaddress;
+    const valid = await cert.checkValidation(ownerAddress, token);
+    if (!valid) return { statusCode: 400, body: 'invalid certification token' };
+    try {
+      await addressRepo.createAddress(linkaddress, ownerAddress);
+      return response(200);
+    } catch (e) {
+      return response(404, e.message);
+    }
+  },
+  { body: ['ownerAddress', 'token', 'linkaddress'] }
+)
+
+export const linkAddress: APIGatewayProxyHandler = middleware(
+  async (param) => {
+    const ownerAddress = param.queryParams.ownerAddress;
     const token = param.queryParams.token;
     const linkaddress = param.queryParams.linkaddress;
     const accountaddress = param.queryParams.accountaddress;
-    const valid = await cert.checkValidation(publicKey, token);
-    if(!valid) {
-      return { statusCode: 400, body: 'invalid certification token' }
-    }
-    const res = await db.address.findByPk(linkaddress);
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        token
-      }, null, 2),
-    }
+    const symbol = param.queryParams.symbol;
+    const valid = await cert.checkValidation(ownerAddress, token);
+    if (!valid) return response(400, 'invalid certification token');
+    await addressRepo.linkAddress(linkaddress, accountaddress, symbol);
+    return response(200);
   },
-  requiredParam
+  { queryParams: ['ownerAddress', 'token', 'linkaddress', 'accountaddress', 'symbol'] }
 )

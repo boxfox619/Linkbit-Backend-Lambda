@@ -1,7 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { Model } from 'sequelize';
 
-class Address extends Model { }
+export class Address extends Model { }
 
 export default (sequelize: Sequelize.Sequelize) => {
   Address.init(AddressTable, { sequelize, modelName: 'address' });
