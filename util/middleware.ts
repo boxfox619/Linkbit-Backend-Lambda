@@ -14,7 +14,7 @@ export interface RequiredParams {
 }
 
 export const middleware = <T extends Parameter>(handler:(param: T) => Promise<APIGatewayProxyResult>, required: RequiredParams = {}): APIGatewayProxyHandler => {
-    return async (event, ctx) => {
+    return async (event) => {
         const queryParams = event.queryStringParameters || {};
         const pathParams = event.pathParameters || {};
         const body = JSON.parse(event.body || '{}');
