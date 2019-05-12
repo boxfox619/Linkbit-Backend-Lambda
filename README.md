@@ -1,4 +1,4 @@
-# Linkbit-Backend-Lambda
+# Linkbit-Backend-Lambda [![Build Status](https://travis-ci.org/boxfox619/Linkbit-Backend-Lambda.svg?branch=master)](https://travis-ci.org/boxfox619/Linkbit-Backend-Lambda)
 Cryptocurrency Linking Service - Linkbit
 
 
