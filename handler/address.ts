@@ -18,7 +18,7 @@ export const getLinkAddress: APIGatewayProxyHandler = middleware(
       return response(404, e.message);
     }
   },
-  { body: ['linkaddress', 'symbol'] }
+  { queryParams: ['linkaddress', 'symbol'] }
 )
 
 export const createAddress: APIGatewayProxyHandler = middleware(

@@ -4,7 +4,7 @@ import { Model } from 'sequelize';
 export class Link extends Model { }
 
 export default (sequelize: Sequelize.Sequelize) => {
-  Link.init(LinkTable, { sequelize, modelName: 'link' });
+  Link.init(LinkTable, { sequelize, tableName: 'link', freezeTableName: true, timestamps: false });
   return Link;
 }
 

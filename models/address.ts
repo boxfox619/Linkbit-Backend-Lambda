@@ -4,7 +4,7 @@ import { Model } from 'sequelize';
 export class Address extends Model { }
 
 export default (sequelize: Sequelize.Sequelize) => {
-  Address.init(AddressTable, { sequelize, modelName: 'address' });
+  Address.init(AddressTable, { sequelize, tableName: 'address', freezeTableName: true, timestamps: false });
   return Address;
 }
 

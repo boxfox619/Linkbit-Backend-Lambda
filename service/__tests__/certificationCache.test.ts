@@ -12,9 +12,10 @@ describe('certificationCache', () => {
     it('should validate text', async () => {
         const encrypted = EthCrypto.cipher.parse(token);
         const decryptedText = await EthCrypto.decryptWithPrivateKey(bob.privateKey, encrypted);
-        const res = certificationCache.checkValidation(bob.publicKey, decryptedText);
+        const address = EthCrypto.publicKey.toAddress(bob.publicKey);
+        const res = certificationCache.checkValidation(address, decryptedText);
         expect(res).toBe(true);
-        const res2 = certificationCache.checkValidation(bob.publicKey, decryptedText);
+        const res2 = certificationCache.checkValidation(address, decryptedText);
         expect(res2).toBe(false);
     });
 }); 

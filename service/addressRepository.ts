@@ -31,9 +31,9 @@ export class AddressRepository implements AddressUsecase {
         await this.db.link.create({ linkAddress, account_address: accountAddress, symbol });
     }
 
-    async getAddress(linkAddress: string, symbol: string) {
-        const address = await this.db.address.findOne({ where: { linkAddress, symbol } });
-        if (!address) throw new Error(`not linked ${linkAddress} ${symbol}`);
+    async getAddress(linkaddress: string, symbol: string) {
+        const address = await this.db.link.findOne({ where: { linkaddress, symbol } });
+        if (!address) throw new Error(`not linked address : ${linkaddress}, symbol : ${symbol}`);
         return address.address;
     }
 

@@ -8,14 +8,13 @@ export interface Database {
     address: typeof Address,
     link: typeof Link
 }
-export const sequelize = new Sequelize(config.database, config.username, config.password, config);
+export const sequelize = new Sequelize(config);
 export const createDatabase = (sequelize: Sequelize): Database => {
     const db = {
         sequelize,
         address: AddressTable(sequelize),
         link: LinkTable(sequelize)
     };
-    db.link.hasMany(db.address, { foreignKey: 'linkaddress' });
     return db;
 };
 export { response, missingParameters } from './response';
