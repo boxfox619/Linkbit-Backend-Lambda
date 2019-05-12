@@ -5,5 +5,7 @@ cache:
   directories:
     - node_modules
 script: 
+    - npm install
     - npm install -g serverless
+    - sudo sed -i 's/return (module.exports/(module.exports/g' ./node_modules/eccrypto/index.js
     - sls deploy
