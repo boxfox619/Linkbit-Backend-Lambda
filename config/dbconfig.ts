@@ -1,6 +1,4 @@
-import { Options } from "sequelize/types";
-
-export const config: Options = {
+export const config = {
     database: process.env.DB_NAME,
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
