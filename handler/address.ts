@@ -3,9 +3,9 @@ import 'source-map-support/register';
 import * as cert from '../service/certificationCache';
 import { middleware } from '../util/middleware';
 import { AddressRepository } from '../service/addressRepository';
-import { createDatabase, sequelize, response } from '../models';
+import { response, createDBClient } from '../models';
 
-const addressRepo = new AddressRepository(createDatabase(sequelize));
+const addressRepo = new AddressRepository(createDBClient());
 
 export const getLinkAddress: APIGatewayProxyHandler = middleware(
   async (param) => {
