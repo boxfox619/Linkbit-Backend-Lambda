@@ -19,11 +19,5 @@ export const missingParameters = (queryParams: string[] = [], pathParams: string
   if (bodyParams.length > 0) {
     messages.push(`missing body keys ${bodyParams.join(',')}`);
   }
-  return {
-    statusCode: 400,
-    statusMessage: messages.join('\n'),
-    body: JSON.stringify({
-      message: messages.join('\n'),
-    }, null, 2)
-  }
+  return response(400, messages.join('\n'));
 }
