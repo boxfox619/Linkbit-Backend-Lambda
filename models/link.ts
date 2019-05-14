@@ -1,24 +1,20 @@
-import * as Sequelize from 'sequelize';
-import { Model } from 'sequelize';
+import { TableModel } from "./tableModel";
 
-export class Link extends Model { }
-
-export default (sequelize: Sequelize.Sequelize) => {
-  Link.init(LinkTable, { sequelize, tableName: 'link', freezeTableName: true, timestamps: false });
-  return Link;
-}
-
-export const LinkTable = {
-  linkaddress: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  symbol: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  account_address: {
-    type: Sequelize.STRING,
-    allowNull: false
+export class Link extends TableModel {
+  public static TableName = 'link';
+  constructor(
+    public address: string,
+    public symbol?: string,
+    public account?: string
+  ) {
+    super();
   }
+  
+  get map(): { [key: string]: any; } {
+    return {
+      address: this.address,
+      symbol: this.symbol,
+      account: this.account
+    }
+  };
 }

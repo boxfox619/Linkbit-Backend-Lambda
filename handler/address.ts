@@ -1,11 +1,12 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-import * as cert from '../service/certificationCache';
+import { CertificationRepository } from '../service/certificationRepository';
 import { middleware } from '../util/middleware';
 import { AddressRepository } from '../service/addressRepository';
-import { createDatabase, sequelize, response } from '../models';
+import { response, createDBClient } from '../models';
 
-const addressRepo = new AddressRepository(createDatabase(sequelize));
+const addressRepo = new AddressRepository(createDBClient());
+const certRepo = new CertificationRepository();
 
 export const getLinkAddress: APIGatewayProxyHandler = middleware(
   async (param) => {
@@ -26,7 +27,7 @@ export const createAddress: APIGatewayProxyHandler = middleware(
     const ownerAddress = param.body.ownerAddress;
     const token = param.body.token;
     const linkaddress = param.body.linkaddress;
-    const valid = await cert.checkValidation(ownerAddress, token);
+    const valid = await certRepo.checkValidation(ownerAddress, token);
     if (!valid) return { statusCode: 400, body: 'invalid certification token' };
     try {
       await addressRepo.createAddress(linkaddress, ownerAddress);
@@ -45,7 +46,7 @@ export const linkAddress: APIGatewayProxyHandler = middleware(
     const linkaddress = param.queryParams.linkaddress;
     const accountaddress = param.queryParams.accountaddress;
     const symbol = param.queryParams.symbol;
-    const valid = await cert.checkValidation(ownerAddress, token);
+    const valid = await certRepo.checkValidation(ownerAddress, token);
     if (!valid) return response(400, 'invalid certification token');
     await addressRepo.linkAddress(linkaddress, accountaddress, symbol);
     return response(200);
