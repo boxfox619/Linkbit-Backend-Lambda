@@ -6,7 +6,7 @@ import { AddressRepository } from '../service/addressRepository';
 import { response, createDBClient } from '../models';
 
 const addressRepo = new AddressRepository(createDBClient());
-const certRepo = new CertificationRepository();
+const certRepo = new CertificationRepository(createDBClient());
 
 export const getLinkAddress: APIGatewayProxyHandler = middleware(
   async (param) => {
