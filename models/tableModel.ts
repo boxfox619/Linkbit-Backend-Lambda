@@ -1,7 +1,8 @@
 import { GetItemInput, PutItemInput } from "aws-sdk/clients/dynamodb";
 
 export abstract class TableModel {
-    public static TableName: string;
+
+    constructor(private tableName: string) {}
 
     abstract get map(): { [key: string]: any }
 
@@ -17,14 +18,14 @@ export abstract class TableModel {
 
     get keyQuery(): GetItemInput {
         return {
-            TableName: TableModel.TableName,
+            TableName: this.tableName,
             Key: this.getMap()
         }
     }
 
     get putQuery(): PutItemInput {
         return {
-            TableName: TableModel.TableName,
+            TableName: this.tableName,
             Item: this.getMap()
         }
     }
