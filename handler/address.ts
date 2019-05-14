@@ -27,7 +27,7 @@ export const createAddress: APIGatewayProxyHandler = middleware(
     const ownerAddress = param.body.ownerAddress;
     const token = param.body.token;
     const linkaddress = param.body.linkaddress;
-    const valid = await cert.checkValidation(ownerAddress, token);
+    const valid = await certRepo.checkValidation(ownerAddress, token);
     if (!valid) return { statusCode: 400, body: 'invalid certification token' };
     try {
       await addressRepo.createAddress(linkaddress, ownerAddress);
