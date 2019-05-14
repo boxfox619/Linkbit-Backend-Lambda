@@ -9,7 +9,7 @@ export class Token extends TableModel {
   }
 
   get map(): { [key: string]: any } {
-    return { address: this.address, owner: this.token }
+    return { address: this.address, token: this.token }
   }
 
 }
