@@ -5,6 +5,7 @@ export const response = (statusCode: number, body: object | string = ''): APIGat
   if (typeof body === 'string') {
     bodyData = { message: body };
   }
+  console.log(`response : statusCode(${statusCode})  body(${bodyData})`);
   return { statusCode, body: JSON.stringify(bodyData, null, 2) }
 }
 

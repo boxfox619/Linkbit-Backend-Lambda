@@ -17,8 +17,8 @@ export class CertificationRepository implements CertificationUsecase {
     }
 
     async checkValidation(address: string, decryptedText: string) {
-        const res = await this.dbClient.get(new Token(address, decryptedText).keyQuery).promise();
+        const res = await this.dbClient.get(new Token(address).keyQuery).promise();
         await this.dbClient.delete(new Token(address).keyQuery).promise();
-        return !res.Item;
+        return !!res.Item && res.Item.token === decryptedText;
     }
 }
