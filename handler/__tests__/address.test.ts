@@ -1,37 +1,31 @@
-import { getLinkAddress, createAddress, linkAddress } from '../address';
+import { createAddress } from '../address';
 import { apiGatewayEventMock, contextMock } from '../../util/mock';
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
-import sinon from 'sinon';
-import AWS from 'aws-sdk';
 import { Token } from '../../models/token';
 import { PutItemInput } from 'aws-sdk/clients/dynamodb';
+import sinon from 'sinon';
+import AWS from 'aws-sdk';
 
-describe('address handler', () => {
-    const sandbox = sinon.createSandbox();
+
+describe('create address handler', () => {
     const address = 'address';
     const token = new Token(address, 'token');
-    let putStub;
-
-    beforeAll(() => {
-        const getStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'get');
-        getStub.withArgs(new Token(address).keyQuery).returns({ promise: () => ({ Item: token }) });
-        getStub.returns({ promise: () => ({}) });
-        sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'delete').returns({ promise: () => ({}) });
-        putStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'put');
-        putStub.returns({ promise: () => ({}) });
-    });
-
-    it('should return status code 404 with message', async () => {
-        const event: APIGatewayProxyEvent = apiGatewayEventMock();
-        const context: Context = contextMock();
-        event.queryStringParameters = { linkaddress: 'test', symbol: 'ETH' };
-        const res = await getLinkAddress(event, context, () => { });
-        expect(res).toBeDefined();
-        const response = res as APIGatewayProxyResult;
-        const body = JSON.parse(response.body);
-        expect(response.statusCode).toBe(404);
-        expect(body.message).toBeDefined();
-        expect(body.message).toBe('not linked address : test, symbol : ETH');
+    const sandbox = sinon.createSandbox();
+    const getStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'get');
+    const deleteStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'delete');
+    const putStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'put');
+    putStub.returns({ promise: () => ({}) });
+    deleteStub.returns({ promise: () => ({}) });
+    getStub.returns({
+        promise: () => {
+            const lastCall = getStub.getCall(getStub.getCalls().length - 1);
+            const query = lastCall.args[0];
+            if (query.Key.address === address) {
+                return { Item: token };
+            } else {
+                return {};
+            }
+        }
     });
 
     it('should return status code 400 with message', async () => {
