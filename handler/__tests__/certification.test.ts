@@ -1,12 +1,15 @@
 import { getCertText } from '../certification';
 import { apiGatewayEventMock, contextMock } from '../../util/mock';
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
-import EthCrypto from 'eth-crypto';
+import crypto from 'crypto';
+import * as eutil from 'ethereumjs-util';
 import sinon from 'sinon';
 import AWS from 'aws-sdk';
 
 describe('certification handler', () => {
     const sandbox = sinon.createSandbox();
+    const privateKey = crypto.randomBytes(32);
+    const publicKey = eutil.privateToPublic(privateKey).toString('hex');
 
     beforeAll(() => {
         sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'put').returns({promise: () => ({})});
@@ -15,8 +18,7 @@ describe('certification handler', () => {
     it('should return status code 200 with token', async () => {
         const event: APIGatewayProxyEvent = apiGatewayEventMock();
         const context: Context = contextMock();
-        const keyPair = EthCrypto.createIdentity();
-        event.queryStringParameters = { 'publicKey': keyPair.publicKey };
+        event.queryStringParameters = { publicKey };
         const res = await getCertText(event, context, () => { });
         expect(res).toBeDefined();
         const response = res as APIGatewayProxyResult;
