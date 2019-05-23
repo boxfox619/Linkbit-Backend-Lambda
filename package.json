@@ -13,8 +13,9 @@
   },
   "dependencies": {
     "aws-sdk": "^2.453.0",
-    "eth-crypto": "^1.3.3",
-    "source-map-support": "^0.5.10"
+    "eth-ecies": "^1.0.3",
+    "source-map-support": "^0.5.10",
+    "ethereumjs-util": "^6.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.4",
