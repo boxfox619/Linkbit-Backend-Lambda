@@ -16,6 +16,7 @@ export const getLinkAddress: APIGatewayProxyHandler = middleware(
       const address = await addressRepo.getAddress(linkaddress, symbol);
       return response(200, { address });
     } catch (e) {
+      console.error(e);
       return response(404, e.message);
     }
   },
@@ -33,6 +34,7 @@ export const createAddress: APIGatewayProxyHandler = middleware(
       await addressRepo.createAddress(linkaddress, ownerAddress);
       return response(200);
     } catch (e) {
+      console.error(e);
       return response(500, 'error');
     }
   },
@@ -52,6 +54,7 @@ export const linkAddress: APIGatewayProxyHandler = middleware(
       await addressRepo.linkAddress(linkaddress, accountaddress, symbol);
       return response(200);
     } catch (e) {
+      console.error(e);
       return response(500, 'error');
     }
   },

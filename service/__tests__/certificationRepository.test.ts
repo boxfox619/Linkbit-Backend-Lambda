@@ -16,7 +16,7 @@ describe('certificationCache', () => {
 
     it('should generate encrypted text', async () => {
         const updateQuery = () => putQuery = putStub.getCall(0).args[0];
-        const putStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'put').returns({ promise: updateQuery});
+        const putStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'put').returns({ promise: updateQuery });
         token = await repo.createCertText(publicKey.toString('hex'));
         expect(token).toBeDefined();
     });
