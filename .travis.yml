@@ -8,4 +8,10 @@ script:
     - npm install
     - npm install -g serverless
     - npm run test
-    - sls deploy
+deploy:
+  - provider: script
+    script: sls deploy
+    on:
+      branch: master
+after_script:
+  - COVERALLS_REPO_TOKEN=$coveralls_repo_token npm run coveralls
