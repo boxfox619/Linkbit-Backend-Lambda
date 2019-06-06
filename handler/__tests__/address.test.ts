@@ -57,4 +57,21 @@ describe('create address handler', () => {
         expect(putQuery.Item.address).toBe('test');
         expect(putQuery.Item.owner).toBe(token.address);
     });
+
+    it('should return status code 200 and database update', async () => {
+        const event: APIGatewayProxyEvent = apiGatewayEventMock();
+        const context: Context = contextMock();
+        event.body = JSON.stringify({ linkaddress: 'test', ownerAddress: token.address, token: token.token });
+        const res = await createAddress(event, context, () => { });
+        expect(res).toBeDefined();
+        const response = res as APIGatewayProxyResult;
+        expect(response.statusCode).toBe(200);
+        expect(putStub.getCall(0)).toBeDefined();
+        expect(putStub.getCall(0).args[0]).toBeDefined();
+        const putQuery = putStub.getCall(0).args[0] as PutItemInput;
+        expect(putQuery.TableName).toBe('linkaddress');
+        expect(putQuery.Item).toBeDefined();
+        expect(putQuery.Item.address).toBe('test');
+        expect(putQuery.Item.owner).toBe(token.address);
+    });
 });

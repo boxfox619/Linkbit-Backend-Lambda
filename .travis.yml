@@ -10,9 +10,9 @@ script:
     - npm run test
 deploy:
   - provider: script
-  script: sls deploy
-  skip_cleanup: true
-  on:
-    branch: master
+    script: sls deploy
+    skip_cleanup: true
+    on:
+      branch: master
 after_script:
   - COVERALLS_REPO_TOKEN=$coveralls_repo_token npm run coveralls

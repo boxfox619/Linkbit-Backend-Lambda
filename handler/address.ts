@@ -43,12 +43,12 @@ export const createAddress: APIGatewayProxyHandler = middleware(
 
 export const linkAddress: APIGatewayProxyHandler = middleware(
   async (param) => {
-    const ownerAddress = param.queryParams.ownerAddress;
     const token = param.queryParams.token;
     const linkaddress = param.queryParams.linkaddress;
     const accountaddress = param.queryParams.accountaddress;
     const symbol = param.queryParams.symbol;
     try {
+      const ownerAddress = await addressRepo.getOwner(linkaddress);
       const valid = await certRepo.checkValidation(ownerAddress, token);
       if (!valid) return response(400, 'invalid certification token');
       await addressRepo.linkAddress(linkaddress, accountaddress, symbol);
@@ -58,5 +58,24 @@ export const linkAddress: APIGatewayProxyHandler = middleware(
       return response(500, 'error');
     }
   },
-  { queryParams: ['ownerAddress', 'token', 'linkaddress', 'accountaddress', 'symbol'] }
+  { queryParams: ['token', 'linkaddress', 'accountaddress', 'symbol'] }
+)
+
+export const unlinkAddress: APIGatewayProxyHandler = middleware(
+  async (param) => {
+    const token = param.queryParams.token;
+    const linkaddress = param.queryParams.linkaddress;
+    const symbol = param.queryParams.symbol;
+    try {
+      const ownerAddress = await addressRepo.getOwner(linkaddress);
+      const valid = await certRepo.checkValidation(ownerAddress, token);
+      if (!valid) return response(400, 'invalid certification token');
+      await addressRepo.unlinkAddress(linkaddress, symbol);
+      return response(200);
+    } catch (e) {
+      console.error(e);
+      return response(500, 'error');
+    }
+  },
+  { queryParams: ['token', 'linkaddress', 'symbol'] }
 )

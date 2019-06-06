@@ -1,6 +1,7 @@
 import { TableModel } from "./tableModel";
 
 export class Link extends TableModel {
+  static TableName = 'link';
   public address: string;
   public symbol?: string;
   public account?: string;
@@ -9,9 +10,9 @@ export class Link extends TableModel {
     symbol?: string,
     account?: string
   ) {
-    super('link');
+    super(Link.TableName);
     this.address = address;
-    this.symbol = symbol;
+    this.symbol = symbol.toUpperCase();
     this.account = account;
   }
 

@@ -1,13 +1,14 @@
 import { TableModel } from "./tableModel";
 
 export class LinkAddress extends TableModel {
+  static TableName = 'linkaddress';
   public address: string;
   public owner?: string;
   constructor(
     address: string,
     owner?: string
   ) {
-    super('linkaddress');
+    super(LinkAddress.TableName);
     this.address = address;
     this.owner = owner;
   }
