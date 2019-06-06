@@ -1,7 +1,4 @@
 import { APIGatewayProxyEvent, APIGatewayEventRequestContext, Context } from "aws-lambda";
-import * as sinon from 'sinon';
-import * as AWS from "aws-sdk";
-import { SinonStub } from "sinon";
 
 export const contextMock = (): Context => ({
   callbackWaitsForEmptyEventLoop: false,
