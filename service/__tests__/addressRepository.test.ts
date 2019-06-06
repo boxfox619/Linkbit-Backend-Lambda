@@ -2,7 +2,6 @@ import { AddressRepository } from '../addressRepository';
 import sinon from 'sinon';
 import AWS from 'aws-sdk';
 import { createDBClient, LinkAddress, Link } from '../../models';
-import { Token } from '../../models/token';
 
 describe('addressRepository', () => {
     const linkAddress1 = 'address';
@@ -36,17 +35,41 @@ describe('addressRepository', () => {
         expect(putQuery.Item.owner).toBe(owner);
     });
 
+    it('should unlink address well', async () => {
+        const symbol = 'eth';
+        await addressRepo.unlinkAddress(linkAddress2, symbol);
+        const lastCall = deleteStub.getCall(deleteStub.getCalls().length - 1);
+        const deleteQuery = lastCall.args[0];
+        expect(deleteQuery).toBeDefined();
+        expect(deleteQuery.TableName).toBe(Link.TableName);
+        expect(deleteQuery.Key.address).toBe(linkAddress2);
+        expect(deleteQuery.Key.symbol).toBe(symbol.toUpperCase());
+    });
+
     it('should link address well', async () => {
         const testAddresss = 'testAddress';
         const symbol = 'eth';
         await addressRepo.linkAddress(linkAddress2, testAddresss, symbol);
-        const lastCall = putStub.getCall(getStub.getCalls().length - 1);
+        const lastCall = putStub.getCall(putStub.getCalls().length - 1);
         const putQuery = lastCall.args[0];
         expect(putQuery).toBeDefined();
         expect(putQuery.TableName).toBe(Link.TableName);
         expect(putQuery.Item.address).toBe(linkAddress2);
         expect(putQuery.Item.account).toBe(testAddresss);
         expect(putQuery.Item.symbol).toBe(symbol.toUpperCase());
+    });
+
+    it('should get owner well', async () => {
+        const ownerAddress = await addressRepo.getOwner(linkAddress2);
+        expect(ownerAddress).toBeDefined();
+        expect(ownerAddress).toBe(owner);
+    });
+
+    it('should check address exist well', async () => {
+        const exist1 = await addressRepo.checkExistLink(linkAddress2);
+        expect(exist1).toBeTruthy();
+        const exist2 = await addressRepo.checkExistLink(linkAddress1);
+        expect(exist2).toBeFalsy();
     });
 
 }); 
