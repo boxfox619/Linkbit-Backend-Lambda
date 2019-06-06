@@ -22,7 +22,7 @@ export class AddressRepository implements AddressUsecase {
     async getOwner(linkAddress: string) {
         const linkaddress = await this.dbClient.get(new LinkAddress(linkAddress).keyQuery).promise();
         if (!linkaddress.Item) throw new Error(`not found linkaddress ${linkAddress}`);
-        return (linkaddress.Item as LinkAddress).address;
+        return (linkaddress.Item as LinkAddress).owner;
     };
 
     async linkAddress(linkAddress: string, accountAddress: string, symbol: string) {
