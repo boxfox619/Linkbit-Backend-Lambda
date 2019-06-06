@@ -1,7 +1,7 @@
 import { AddressRepository } from '../addressRepository';
 import sinon from 'sinon';
 import AWS from 'aws-sdk';
-import { createDBClient, LinkAddress } from '../../models';
+import { createDBClient, LinkAddress, Link } from '../../models';
 import { Token } from '../../models/token';
 
 describe('addressRepository', () => {
@@ -43,6 +43,7 @@ describe('addressRepository', () => {
         const lastCall = putStub.getCall(getStub.getCalls().length - 1);
         const putQuery = lastCall.args[0];
         expect(putQuery).toBeDefined();
+        expect(putQuery.TableName).toBe(Link.TableName);
         expect(putQuery.Item.address).toBe(linkAddress2);
         expect(putQuery.Item.account).toBe(testAddresss);
         expect(putQuery.Item.symbol).toBe(symbol.toUpperCase());

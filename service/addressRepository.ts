@@ -29,7 +29,7 @@ export class AddressRepository implements AddressUsecase {
         const isExist = await this.checkExistLink(linkAddress);
         if (!isExist) throw new Error(`not found linkaddress ${linkAddress}`);
         await this.unlinkAddress(linkAddress, symbol);
-        await this.dbClient.put(new Link(linkAddress, accountAddress, symbol).putQuery).promise();
+        await this.dbClient.put(new Link(linkAddress, symbol, accountAddress).putQuery).promise();
     }
 
     async getAddress(linkaddress: string, symbol: string) {
@@ -39,7 +39,7 @@ export class AddressRepository implements AddressUsecase {
     }
 
     async unlinkAddress(linkAddress: string, symbol: string) {
-        await this.dbClient.delete(new LinkAddress(linkAddress, symbol).keyQuery).promise();
+        await this.dbClient.delete(new Link(linkAddress, symbol).keyQuery).promise();
     }
 
 }
