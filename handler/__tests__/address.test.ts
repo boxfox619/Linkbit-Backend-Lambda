@@ -1,38 +1,26 @@
-import { createAddress } from '../address';
+import AddressHanders from '../address';
 import { apiGatewayEventMock, contextMock } from '../../util/mock';
-import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { Token } from '../../models/token';
-import { PutItemInput } from 'aws-sdk/clients/dynamodb';
 import sinon from 'sinon';
+import { CertificationRepository } from '../../service/certificationRepository';
 import AWS from 'aws-sdk';
+import { AddressRepository } from '../../service/addressRepository';
 
 
 describe('create address handler', () => {
     const address = 'address';
     const token = new Token(address, 'token');
     const sandbox = sinon.createSandbox();
-    const getStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'get');
-    const deleteStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'delete');
-    const putStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'put');
-    putStub.returns({ promise: () => ({}) });
-    deleteStub.returns({ promise: () => ({}) });
-    getStub.returns({
-        promise: () => {
-            const lastCall = getStub.getCall(getStub.getCalls().length - 1);
-            const query = lastCall.args[0];
-            if (query.Key.address === address) {
-                return { Item: token };
-            } else {
-                return {};
-            }
-        }
-    });
+    const dbClient = new AWS.DynamoDB.DocumentClient();
+    const addressRepo = sinon.createStubInstance(AddressRepository);
+    const certRepo = sinon.createStubInstance(CertificationRepository);
+    const addressHanders = AddressHanders(addressRepo, certRepo);
 
     it('should return status code 400 with message', async () => {
-        const event: APIGatewayProxyEvent = apiGatewayEventMock();
-        const context: Context = contextMock();
-        event.body = JSON.stringify({ linkaddress: 'test', ownerAddress: 'addr2', token: 'token-11' });
-        const res = await createAddress(event, context, () => { });
+        certRepo.checkValidation.returns(false);
+        const event: APIGatewayProxyEvent = apiGatewayEventMock({ linkaddress: 'test', ownerAddress: 'addr2', token: 'token-11' });
+        const res = await addressHanders.createAddress(event, contextMock(), () => { });
         expect(res).toBeDefined();
         const response = res as APIGatewayProxyResult;
         const body = JSON.parse(response.body);
@@ -42,36 +30,17 @@ describe('create address handler', () => {
     });
 
     it('should return status code 200 and database update', async () => {
-        const event: APIGatewayProxyEvent = apiGatewayEventMock();
-        const context: Context = contextMock();
-        event.body = JSON.stringify({ linkaddress: 'test', ownerAddress: token.address, token: token.token });
-        const res = await createAddress(event, context, () => { });
+        certRepo.checkValidation.returns(true);
+        const linkaddress = 'test-link-address';
+        const event: APIGatewayProxyEvent = apiGatewayEventMock({ linkaddress, ownerAddress: token.address, token: token.token });
+        const res = await addressHanders.createAddress(event, contextMock(), () => { });
         expect(res).toBeDefined();
         const response = res as APIGatewayProxyResult;
         expect(response.statusCode).toBe(200);
-        expect(putStub.getCall(0)).toBeDefined();
-        expect(putStub.getCall(0).args[0]).toBeDefined();
-        const putQuery = putStub.getCall(0).args[0] as PutItemInput;
-        expect(putQuery.TableName).toBe('linkaddress');
-        expect(putQuery.Item).toBeDefined();
-        expect(putQuery.Item.address).toBe('test');
-        expect(putQuery.Item.owner).toBe(token.address);
-    });
-
-    it('should return status code 200 and database update', async () => {
-        const event: APIGatewayProxyEvent = apiGatewayEventMock();
-        const context: Context = contextMock();
-        event.body = JSON.stringify({ linkaddress: 'test', ownerAddress: token.address, token: token.token });
-        const res = await createAddress(event, context, () => { });
-        expect(res).toBeDefined();
-        const response = res as APIGatewayProxyResult;
-        expect(response.statusCode).toBe(200);
-        expect(putStub.getCall(0)).toBeDefined();
-        expect(putStub.getCall(0).args[0]).toBeDefined();
-        const putQuery = putStub.getCall(0).args[0] as PutItemInput;
-        expect(putQuery.TableName).toBe('linkaddress');
-        expect(putQuery.Item).toBeDefined();
-        expect(putQuery.Item.address).toBe('test');
-        expect(putQuery.Item.owner).toBe(token.address);
+        expect(addressRepo.createAddress.getCalls().length).toBe(1);
+        const createAddressCall = addressRepo.createAddress.getCall(0);
+        console.log('12312312-3123-123123-132');
+        expect(createAddressCall.args[0]).toBe(linkaddress);
+        expect(createAddressCall.args[1]).toBe(token.address);
     });
 });

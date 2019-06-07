@@ -13,24 +13,31 @@ provider:
 
 functions:
   getAddress:
-    handler: handlers.getLinkAddress
+    handler: handlers.addressHanders.getLinkAddress
     events:
       - http:
           method: get
           path: address
           cors: true
   createAddress:
-    handler: handlers.createAddress
+    handler: handlers.addressHanders.createAddress
     events:
       - http:
           method: post
           path: address
           cors: true
   linkAddress:
-    handler: handlers.linkAddress
+    handler: handlers.addressHanders.linkAddress
     events:
       - http:
           method: put
+          path: address
+          cors: true
+  unlinkAddress:
+    handler: handlers.addressHanders.unlinkAddress
+    events:
+      - http:
+          method: delete
           path: address
           cors: true
   getCertText:
