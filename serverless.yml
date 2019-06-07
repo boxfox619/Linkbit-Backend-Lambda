@@ -41,7 +41,7 @@ functions:
           path: address
           cors: true
   getCertText:
-    handler: handlers.getCertText
+    handler: handlers.certificationHanders.getCertText
     events:
       - http:
           method: get

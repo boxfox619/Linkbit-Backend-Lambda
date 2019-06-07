@@ -54,11 +54,11 @@ export const apiGatewayContext = (): APIGatewayEventRequestContext => ({
   routeKey: null,
 })
 
-export const apiGatewayEventMock = (body: string | object = ''): APIGatewayProxyEvent => ({
+export const apiGatewayEventMock = (body: string | object = '', queryStringParameters: { [name: string]: string } = {}): APIGatewayProxyEvent => ({
   body: typeof body === 'string' ? body : JSON.stringify(body),
   httpMethod: 'GET',
   headers: {},
-  queryStringParameters: {},
+  queryStringParameters,
   multiValueHeaders: {},
   isBase64Encoded: false,
   path: '',
