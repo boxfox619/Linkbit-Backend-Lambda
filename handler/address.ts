@@ -39,10 +39,10 @@ const handlers = (addressRepo: AddressUsecase, certRepo: CertificationUsecase): 
   ),
   linkAddress: middleware(
     async (param) => {
-      const token = param.queryParams.token;
-      const linkaddress = param.queryParams.linkaddress;
-      const accountaddress = param.queryParams.accountaddress;
-      const symbol = param.queryParams.symbol;
+      const token = param.body.token;
+      const linkaddress = param.body.linkaddress;
+      const accountaddress = param.body.accountaddress;
+      const symbol = param.body.symbol;
       try {
         const ownerAddress = await addressRepo.getOwner(linkaddress);
         const valid = await certRepo.checkValidation(ownerAddress, token);
@@ -54,13 +54,13 @@ const handlers = (addressRepo: AddressUsecase, certRepo: CertificationUsecase): 
         return response(500, 'error');
       }
     },
-    { queryParams: ['token', 'linkaddress', 'accountaddress', 'symbol'] }
+    { body: ['token', 'linkaddress', 'accountaddress', 'symbol'] }
   ),
   unlinkAddress: middleware(
     async (param) => {
-      const token = param.queryParams.token;
-      const linkaddress = param.queryParams.linkaddress;
-      const symbol = param.queryParams.symbol;
+      const token = param.body.token;
+      const linkaddress = param.body.linkaddress;
+      const symbol = param.body.symbol;
       try {
         const ownerAddress = await addressRepo.getOwner(linkaddress);
         const valid = await certRepo.checkValidation(ownerAddress, token);
@@ -72,7 +72,7 @@ const handlers = (addressRepo: AddressUsecase, certRepo: CertificationUsecase): 
         return response(500, 'error');
       }
     },
-    { queryParams: ['token', 'linkaddress', 'symbol'] }
+    { body: ['token', 'linkaddress', 'symbol'] }
   )
 })
 
