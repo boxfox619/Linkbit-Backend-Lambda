@@ -9,5 +9,8 @@ export { hello } from './handler/hello';
 const addressRepo = new AddressRepository(createDBClient());
 const certRepo = new CertificationRepository(createDBClient());
 
-export const addressHanders = AddressHanders(addressRepo, certRepo);
-export const certificationHanders = CertificationHanders(certRepo);
+const addressHanders = AddressHanders(addressRepo, certRepo);
+const certificationHanders = CertificationHanders(certRepo);
+
+export const { getLinkAddress, createAddress, linkAddress, unlinkAddress } = addressHanders
+export const { getCertText } = certificationHanders
