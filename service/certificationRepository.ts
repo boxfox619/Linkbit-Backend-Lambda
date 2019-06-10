@@ -13,6 +13,7 @@ export class CertificationRepository implements CertificationUsecase {
         const randomText = crypto.randomBytes(30).toString('hex');
         const address = eutil.pubToAddress(publicKey).toString("hex");
         const encryptedText = ECIES.encrypt(publicKey, randomText).toString('hex');
+        await this.dbClient.delete(new Token(address).keyQuery).promise();
         await this.dbClient.put(new Token(address, randomText).putQuery).promise();
         return encryptedText;
     }
@@ -20,6 +21,7 @@ export class CertificationRepository implements CertificationUsecase {
     async checkValidation(address: string, decryptedText: string) {
         const res = await this.dbClient.get(new Token(address).keyQuery).promise();
         await this.dbClient.delete(new Token(address).keyQuery).promise();
+        console.error(`validation token ${address} - ${decryptedText} | exist : ${!!res.Item}`);
         return !!res.Item && res.Item.token === decryptedText;
     }
 }

@@ -31,14 +31,14 @@ functions:
     events:
       - http:
           method: put
-          path: address
+          path: address/link
           cors: true
   unlinkAddress:
     handler: handlers.unlinkAddress
     events:
       - http:
           method: delete
-          path: address
+          path: address/link
           cors: true
   getCertText:
     handler: handlers.getCertText

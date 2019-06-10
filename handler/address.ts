@@ -32,7 +32,7 @@ const handlers = (addressRepo: AddressUsecase, certRepo: CertificationUsecase): 
         return response(200);
       } catch (e) {
         console.error(e);
-        return response(500, 'error');
+        return response(500, e.message);
       }
     },
     { body: ['ownerAddress', 'token', 'linkaddress'] }
