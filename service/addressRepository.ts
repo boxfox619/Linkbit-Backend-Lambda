@@ -6,12 +6,19 @@ export class AddressRepository implements AddressUsecase {
 
     constructor(private dbClient: AWS.DynamoDB.DocumentClient) { }
 
-    async createAddress(linkAddress: string, ownerAddress: string) {
-        const isExist = await this.checkExistLink(linkAddress);
-        if (isExist) throw new Error(`already exist link ${linkAddress}`);
-        const query = new LinkAddress(linkAddress, ownerAddress).putQuery;
+    async createAddress(linkaddress: string, ownerAddress: string) {
+        const isExist = await this.checkExistLink(linkaddress);
+        if (isExist) throw new Error(`already exist link ${linkaddress}`);
+        const query = new LinkAddress(linkaddress, ownerAddress).putQuery;
         await this.dbClient.put(query).promise();
     };
+
+    async deleteAddress(linkaddress: string) {
+        const isExist = await this.checkExistLink(linkaddress);
+        if (!isExist) throw new Error(`not exist link ${linkaddress}`);
+        const query = new LinkAddress(linkaddress).keyQuery;
+        await this.dbClient.delete(query).promise();
+    }
 
     async checkExistLink(linkaddress: string) {
         const query = new LinkAddress(linkaddress).keyQuery;

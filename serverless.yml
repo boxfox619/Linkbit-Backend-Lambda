@@ -26,19 +26,26 @@ functions:
           method: post
           path: address
           cors: true
+  deleteAddress:
+    handler: handlers.deleteAddress
+    events:
+      - http:
+          method: delete
+          path: address
+          cors: true
   linkAddress:
     handler: handlers.linkAddress
     events:
       - http:
           method: put
-          path: address/link
+          path: link
           cors: true
   unlinkAddress:
     handler: handlers.unlinkAddress
     events:
       - http:
           method: delete
-          path: address/link
+          path: link
           cors: true
   getCertText:
     handler: handlers.getCertText
