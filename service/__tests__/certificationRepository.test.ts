@@ -13,6 +13,7 @@ describe('certificationCache', () => {
     const privateKey = crypto.randomBytes(32);
     const publicKey = eutil.privateToPublic(privateKey);
     let token: string = undefined;
+    sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'delete').returns({ promise: () => { } });
 
     it('should generate encrypted text', async () => {
         const updateQuery = () => putQuery = putStub.getCall(0).args[0];
@@ -23,7 +24,6 @@ describe('certificationCache', () => {
 
     it('should validate text', async () => {
         sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'get').returns({ promise: () => putQuery });
-        sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'delete').returns({ promise: () => { } });
         const decryptedText = ECIES.decrypt(privateKey, Buffer.from(token, 'hex')).toString();
         const address = eutil.pubToAddress(publicKey).toString("hex");
         const res = await repo.checkValidation(address, decryptedText);
