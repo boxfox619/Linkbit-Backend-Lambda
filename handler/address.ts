@@ -37,6 +37,23 @@ const handlers = (addressRepo: AddressUsecase, certRepo: CertificationUsecase): 
     },
     { body: ['ownerAddress', 'token', 'linkaddress'] }
   ),
+  deleteAddress: middleware(
+    async (param) => {
+      const token = param.body.token;
+      const linkaddress = param.body.linkaddress;
+      try {
+        const ownerAddress = await addressRepo.getOwner(linkaddress);
+        const valid = await certRepo.checkValidation(ownerAddress, token);
+        if (!valid) return response(400, 'invalid certification token');
+        await addressRepo.deleteAddress(linkaddress);
+        return response(200);
+      } catch (e) {
+        console.error(e);
+        return response(500, e.message);
+      }
+    },
+    { body: ['ownerAddress', 'token', 'linkaddress'] }
+  ),
   linkAddress: middleware(
     async (param) => {
       const token = param.body.token;

@@ -12,5 +12,5 @@ const certRepo = new CertificationRepository(createDBClient());
 const addressHanders = AddressHanders(addressRepo, certRepo);
 const certificationHanders = CertificationHanders(certRepo);
 
-export const { getLinkAddress, createAddress, linkAddress, unlinkAddress } = addressHanders
+export const { getLinkAddress, deleteAddress, createAddress, linkAddress, unlinkAddress } = addressHanders
 export const { getCertText } = certificationHanders
