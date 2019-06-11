@@ -12,7 +12,7 @@ export class Link extends TableModel {
   ) {
     super(Link.TableName);
     this.address = address;
-    this.symbol = symbol.toUpperCase();
+    this.symbol = symbol ? symbol.toUpperCase() : undefined;
     this.account = account;
   }
 

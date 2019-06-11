@@ -18,6 +18,8 @@ export class AddressRepository implements AddressUsecase {
         if (!isExist) throw new Error(`not exist link ${linkaddress}`);
         const query = new LinkAddress(linkaddress).keyQuery;
         await this.dbClient.delete(query).promise();
+        const query2 = new Link(linkaddress).keyQuery;
+        await this.dbClient.delete(query2).promise();
     }
 
     async checkExistLink(linkaddress: string) {
