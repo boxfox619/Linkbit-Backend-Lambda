@@ -52,7 +52,7 @@ const handlers = (addressRepo: AddressUsecase, certRepo: CertificationUsecase): 
         return response(500, e.message);
       }
     },
-    { body: ['ownerAddress', 'token', 'linkaddress'] }
+    { body: ['token', 'linkaddress'] }
   ),
   linkAddress: middleware(
     async (param) => {

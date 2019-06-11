@@ -28,11 +28,19 @@ describe('addressRepository', () => {
 
     it('should create address well', async () => {
         await addressRepo.createAddress(linkAddress1, owner);
-        const lastCall = putStub.getCall(getStub.getCalls().length - 1);
+        const lastCall = putStub.getCall(putStub.getCalls().length - 1);
         const putQuery = lastCall.args[0];
         expect(putQuery).toBeDefined();
         expect(putQuery.Item.address).toBe(linkAddress1);
         expect(putQuery.Item.owner).toBe(owner);
+    });
+
+    it('should delete address well', async () => {
+        await addressRepo.deleteAddress(linkAddress2);
+        const lastCall = deleteStub.getCall(deleteStub.getCalls().length - 1);
+        const deleteQuery = lastCall.args[0];
+        expect(deleteQuery).toBeDefined();
+        expect(deleteQuery.Key.address).toBe(linkAddress2);
     });
 
     it('should unlink address well', async () => {
