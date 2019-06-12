@@ -1,4 +1,4 @@
-import { missingParameters } from "../models/response";
+import { missingParameters } from "../models/lambda";
 import { APIGatewayProxyHandler, APIGatewayProxyResult } from "aws-lambda";
 
 export interface Parameter {

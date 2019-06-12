@@ -1,12 +1,11 @@
-import { TableModel } from "./tableModel";
+import { Table } from "./table";
+import { TokenEntity } from "../entity";
 
-export class Token extends TableModel {
+export class Token extends Table implements TokenEntity {
   static TableName: string = 'token';
-  public address: string;
-  public token?: string;
   constructor(
-    address: string,
-    token?: string
+    public address: string,
+    public token?: string
   ) {
     super(Token.TableName);
     this.address = address;

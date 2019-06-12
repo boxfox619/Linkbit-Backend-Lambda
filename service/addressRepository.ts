@@ -1,5 +1,5 @@
 import * as AWS from 'aws-sdk';
-import { LinkAddress, Link } from '../models';
+import { LinkAddress, Link } from '../models/dynamo';
 import { AddressUsecase } from '../domain/address';
 
 export class AddressRepository implements AddressUsecase {

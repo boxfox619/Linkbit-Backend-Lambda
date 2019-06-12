@@ -1,7 +1,7 @@
 import { AddressRepository } from '../addressRepository';
 import sinon from 'sinon';
 import AWS from 'aws-sdk';
-import { createDBClient, LinkAddress, Link } from '../../models';
+import { createDBClient, LinkAddress } from '../../models/dynamo';
 
 describe('addressRepository', () => {
     const linkAddress1 = 'address';

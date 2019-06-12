@@ -1,17 +1,10 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 import { middleware } from '../util/middleware';
-import { response } from '../models';
+import { response } from '../models/lambda';
 import { CertificationUsecase } from '../domain/certification';
 import { LinkUsecase } from '../domain/link';
 import { AddressUsecase } from '../domain/address';
-
-interface LinkHandler {
-    getAddressMap: APIGatewayProxyHandler,
-    getLinkAddress: APIGatewayProxyHandler,
-    linkAddress: APIGatewayProxyHandler,
-    unlinkAddress: APIGatewayProxyHandler
-}
+import LinkHandler from '../models/handler/linkHandler';
 
 const handlers = (addressRepo: AddressUsecase, linkRepo: LinkUsecase, certRepo: CertificationUsecase): LinkHandler => ({
     getAddressMap: middleware(

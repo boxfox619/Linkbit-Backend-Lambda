@@ -1,12 +1,8 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 import { middleware } from '../util/middleware';
-import { response } from '../models';
+import { response } from '../models/lambda';
 import { CertificationUsecase } from '../domain/certification';
-
-interface CertificationHandler {
-  getCertText: APIGatewayProxyHandler
-}
+import CertificationHandler from '../models/handler/certificationHander';
 
 const handlers = (certRepo: CertificationUsecase): CertificationHandler => ({
   getCertText: middleware(
@@ -16,7 +12,7 @@ const handlers = (certRepo: CertificationUsecase): CertificationHandler => ({
       return response(200, { token });
     },
     { queryParams: ['publicKey'] }
-  ) 
+  )
 });
 
 export default handlers;

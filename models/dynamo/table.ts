@@ -1,6 +1,6 @@
 import { GetItemInput, PutItemInput } from "aws-sdk/clients/dynamodb";
 
-export abstract class TableModel {
+export abstract class Table {
 
     constructor(private tableName: string) {}
 

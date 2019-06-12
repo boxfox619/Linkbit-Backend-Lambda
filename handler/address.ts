@@ -1,14 +1,9 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 import { middleware } from '../util/middleware';
-import { response } from '../models';
+import { response } from '../models/lambda';
 import { AddressUsecase } from '../domain/address';
 import { CertificationUsecase } from '../domain/certification';
-
-interface AddressHandler {
-  createAddress: APIGatewayProxyHandler,
-  deleteAddress: APIGatewayProxyHandler
-}
+import AddressHandler from '../models/handler/addressHander';
 
 const handlers = (addressRepo: AddressUsecase, certRepo: CertificationUsecase): AddressHandler => ({
   createAddress: middleware(

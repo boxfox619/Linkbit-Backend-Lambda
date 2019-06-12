@@ -1,4 +1,4 @@
-import AddressMap from "../models/addressMap";
+import { AddressMap } from "../entity";
 
 export interface LinkUsecase {
     getAddressMap: (ownerAddress: string) => Promise<AddressMap[]>;

@@ -1,6 +1,6 @@
 export { Link } from './link';
 export { LinkAddress } from './linkaddress';
-export { response, missingParameters } from './response';
+export { Token } from './token';
 import * as AWS from 'aws-sdk';
 
 export const createDBClient = (): AWS.DynamoDB.DocumentClient => {

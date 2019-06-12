@@ -2,7 +2,7 @@ import { AddressRepository } from '../addressRepository';
 import { LinkRepository } from '../linkRepository';
 import sinon from 'sinon';
 import AWS from 'aws-sdk';
-import { createDBClient, LinkAddress, Link } from '../../models';
+import { createDBClient, Link } from '../../models/dynamo';
 
 describe('addressRepository', () => {
     const linkAddress = 'linkAddress';
@@ -61,5 +61,4 @@ describe('addressRepository', () => {
         expect(getQuery.Key.address).toBe(linkAddress);
         expect(getQuery.Key.symbol).toBe(symbol.toUpperCase());
     });
-
 }); 

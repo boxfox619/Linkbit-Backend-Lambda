@@ -1,7 +1,7 @@
 import AddressHanders from '../address';
 import { apiGatewayEventMock, contextMock } from '../../util/mock';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { Token } from '../../models/token';
+import { Token } from '../../models/dynamo';
 import sinon from 'sinon';
 import { CertificationRepository } from '../../service/certificationRepository';
 import { AddressRepository } from '../../service/addressRepository';
