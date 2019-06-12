@@ -3,10 +3,13 @@ import { LinkEntity } from "../entity";
 
 export class Link extends Table implements LinkEntity {
   static TableName = 'link';
+  public address: string;
+  public symbol?: string;
+  public account?: string;
   constructor(
-    public address: string,
-    public symbol?: string,
-    public account?: string
+    address: string,
+    symbol?: string,
+    account?: string
   ) {
     super(Link.TableName);
     this.address = address;

@@ -3,9 +3,11 @@ import { TokenEntity } from "../entity";
 
 export class Token extends Table implements TokenEntity {
   static TableName: string = 'token';
+  public address: string;
+  public token?: string;
   constructor(
-    public address: string,
-    public token?: string
+    address: string,
+    token?: string
   ) {
     super(Token.TableName);
     this.address = address;
