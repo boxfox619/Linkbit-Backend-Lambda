@@ -43,30 +43,6 @@ describe('addressRepository', () => {
         expect(deleteQuery.Key.address).toBe(linkAddress2);
     });
 
-    it('should unlink address well', async () => {
-        const symbol = 'eth';
-        await addressRepo.unlinkAddress(linkAddress2, symbol);
-        const lastCall = deleteStub.getCall(deleteStub.getCalls().length - 1);
-        const deleteQuery = lastCall.args[0];
-        expect(deleteQuery).toBeDefined();
-        expect(deleteQuery.TableName).toBe(Link.TableName);
-        expect(deleteQuery.Key.address).toBe(linkAddress2);
-        expect(deleteQuery.Key.symbol).toBe(symbol.toUpperCase());
-    });
-
-    it('should link address well', async () => {
-        const testAddresss = 'testAddress';
-        const symbol = 'eth';
-        await addressRepo.linkAddress(linkAddress2, testAddresss, symbol);
-        const lastCall = putStub.getCall(putStub.getCalls().length - 1);
-        const putQuery = lastCall.args[0];
-        expect(putQuery).toBeDefined();
-        expect(putQuery.TableName).toBe(Link.TableName);
-        expect(putQuery.Item.address).toBe(linkAddress2);
-        expect(putQuery.Item.account).toBe(testAddresss);
-        expect(putQuery.Item.symbol).toBe(symbol.toUpperCase());
-    });
-
     it('should get owner well', async () => {
         const ownerAddress = await addressRepo.getOwner(linkAddress2);
         expect(ownerAddress).toBeDefined();

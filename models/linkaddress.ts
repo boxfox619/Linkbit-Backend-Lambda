@@ -5,7 +5,7 @@ export class LinkAddress extends TableModel {
   public address: string;
   public owner?: string;
   constructor(
-    address: string,
+    address?: string,
     owner?: string
   ) {
     super(LinkAddress.TableName);

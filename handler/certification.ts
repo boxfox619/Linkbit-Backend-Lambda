@@ -4,7 +4,11 @@ import { middleware } from '../util/middleware';
 import { response } from '../models';
 import { CertificationUsecase } from '../domain/certification';
 
-const handlers = (certRepo: CertificationUsecase): { [name: string]: APIGatewayProxyHandler } => ({
+interface CertificationHandler {
+  getCertText: APIGatewayProxyHandler
+}
+
+const handlers = (certRepo: CertificationUsecase): CertificationHandler => ({
   getCertText: middleware(
     async (param) => {
       const publicKey = param.queryParams.publicKey;
