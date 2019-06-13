@@ -1,6 +1,7 @@
-import { TableModel } from "./tableModel";
+import { Table } from "./table";
+import { LinkEntity } from "../entity";
 
-export class Link extends TableModel {
+export class Link extends Table implements LinkEntity {
   static TableName = 'link';
   public address: string;
   public symbol?: string;

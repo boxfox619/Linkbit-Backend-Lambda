@@ -1,7 +1,7 @@
 import { AddressRepository } from '../addressRepository';
 import sinon from 'sinon';
 import AWS from 'aws-sdk';
-import { createDBClient, LinkAddress, Link } from '../../models';
+import { createDBClient, LinkAddress } from '../../models/dynamo';
 
 describe('addressRepository', () => {
     const linkAddress1 = 'address';
@@ -11,6 +11,7 @@ describe('addressRepository', () => {
     const getStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'get');
     const deleteStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'delete');
     const putStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'put');
+    const queryStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'query');
     putStub.returns({ promise: () => ({}) });
     deleteStub.returns({ promise: () => ({}) });
     getStub.returns({
@@ -21,6 +22,16 @@ describe('addressRepository', () => {
                 return { Item: new LinkAddress(linkAddress2, owner) };
             } else {
                 return {};
+            }
+        }
+    });
+    queryStub.returns({
+        promise: () => {
+            return {
+                Items: [
+                    new LinkAddress('link-address', owner),
+                    new LinkAddress('link-address2', owner)
+                ]
             }
         }
     });
@@ -43,30 +54,6 @@ describe('addressRepository', () => {
         expect(deleteQuery.Key.address).toBe(linkAddress2);
     });
 
-    it('should unlink address well', async () => {
-        const symbol = 'eth';
-        await addressRepo.unlinkAddress(linkAddress2, symbol);
-        const lastCall = deleteStub.getCall(deleteStub.getCalls().length - 1);
-        const deleteQuery = lastCall.args[0];
-        expect(deleteQuery).toBeDefined();
-        expect(deleteQuery.TableName).toBe(Link.TableName);
-        expect(deleteQuery.Key.address).toBe(linkAddress2);
-        expect(deleteQuery.Key.symbol).toBe(symbol.toUpperCase());
-    });
-
-    it('should link address well', async () => {
-        const testAddresss = 'testAddress';
-        const symbol = 'eth';
-        await addressRepo.linkAddress(linkAddress2, testAddresss, symbol);
-        const lastCall = putStub.getCall(putStub.getCalls().length - 1);
-        const putQuery = lastCall.args[0];
-        expect(putQuery).toBeDefined();
-        expect(putQuery.TableName).toBe(Link.TableName);
-        expect(putQuery.Item.address).toBe(linkAddress2);
-        expect(putQuery.Item.account).toBe(testAddresss);
-        expect(putQuery.Item.symbol).toBe(symbol.toUpperCase());
-    });
-
     it('should get owner well', async () => {
         const ownerAddress = await addressRepo.getOwner(linkAddress2);
         expect(ownerAddress).toBeDefined();
@@ -78,6 +65,11 @@ describe('addressRepository', () => {
         expect(exist1).toBeTruthy();
         const exist2 = await addressRepo.checkExistLink(linkAddress1);
         expect(exist2).toBeFalsy();
+    });
+
+    it('should get address list well', async () => {
+        const addressList = await addressRepo.getAddressList(owner);
+        expect(addressList.length).toBe(2);
     });
 
 }); 

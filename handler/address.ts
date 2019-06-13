@@ -1,25 +1,10 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 import { middleware } from '../util/middleware';
-import { response } from '../models';
-import { AddressUsecase } from '../domain/address';
-import { CertificationUsecase } from '../domain/certification';
+import { response } from '../models/lambda';
+import { AddressUsecase, CertificationUsecase } from '../models/domain';
+import AddressHandler from '../models/handler/addressHander';
 
-const handlers = (addressRepo: AddressUsecase, certRepo: CertificationUsecase): { [name: string]: APIGatewayProxyHandler } => ({
-  getLinkAddress: middleware(
-    async (param) => {
-      const linkaddress = param.queryParams.linkaddress;
-      const symbol = param.queryParams.symbol;
-      try {
-        const address = await addressRepo.getAddress(linkaddress, symbol);
-        return response(200, { address });
-      } catch (e) {
-        console.error(e);
-        return response(404, e.message);
-      }
-    },
-    { queryParams: ['linkaddress', 'symbol'] }
-  ),
+const handlers = (addressRepo: AddressUsecase, certRepo: CertificationUsecase): AddressHandler => ({
   createAddress: middleware(
     async (param) => {
       const ownerAddress = param.body.ownerAddress;
@@ -53,43 +38,6 @@ const handlers = (addressRepo: AddressUsecase, certRepo: CertificationUsecase): 
       }
     },
     { body: ['token', 'linkaddress'] }
-  ),
-  linkAddress: middleware(
-    async (param) => {
-      const token = param.body.token;
-      const linkaddress = param.body.linkaddress;
-      const accountaddress = param.body.accountaddress;
-      const symbol = param.body.symbol;
-      try {
-        const ownerAddress = await addressRepo.getOwner(linkaddress);
-        const valid = await certRepo.checkValidation(ownerAddress, token);
-        if (!valid) return response(400, 'invalid certification token');
-        await addressRepo.linkAddress(linkaddress, accountaddress, symbol);
-        return response(200);
-      } catch (e) {
-        console.error(e);
-        return response(500, 'error');
-      }
-    },
-    { body: ['token', 'linkaddress', 'accountaddress', 'symbol'] }
-  ),
-  unlinkAddress: middleware(
-    async (param) => {
-      const token = param.body.token;
-      const linkaddress = param.body.linkaddress;
-      const symbol = param.body.symbol;
-      try {
-        const ownerAddress = await addressRepo.getOwner(linkaddress);
-        const valid = await certRepo.checkValidation(ownerAddress, token);
-        if (!valid) return response(400, 'invalid certification token');
-        await addressRepo.unlinkAddress(linkaddress, symbol);
-        return response(200);
-      } catch (e) {
-        console.error(e);
-        return response(500, 'error');
-      }
-    },
-    { body: ['token', 'linkaddress', 'symbol'] }
   )
 })
 

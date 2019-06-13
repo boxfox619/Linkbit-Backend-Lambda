@@ -13,7 +13,7 @@ provider:
 
 functions:
   getAddress:
-    handler: handlers.getLinkAddress
+    handler: handlers.getAddressMap
     events:
       - http:
           method: get
@@ -32,6 +32,13 @@ functions:
       - http:
           method: delete
           path: address
+          cors: true
+  getLink:
+    handler: handlers.getLinkAddress
+    events:
+      - http:
+          method: get
+          path: link
           cors: true
   linkAddress:
     handler: handlers.linkAddress

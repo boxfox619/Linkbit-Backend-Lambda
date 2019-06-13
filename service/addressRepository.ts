@@ -1,10 +1,23 @@
 import * as AWS from 'aws-sdk';
-import { LinkAddress, Link } from '../models';
-import { AddressUsecase } from '../domain/address';
+import { LinkAddress, Link } from '../models/dynamo';
+import { AddressUsecase } from '../models/domain/address';
 
 export class AddressRepository implements AddressUsecase {
 
     constructor(private dbClient: AWS.DynamoDB.DocumentClient) { }
+
+    async getAddressList(ownerAddress: string) {
+        const query = {
+            TableName: LinkAddress.TableName,
+            IndexName: 'owner-index',
+            KeyConditionExpression: '#owner = :owner_id',
+            ExpressionAttributeValues: { ':owner_id': ownerAddress },
+            ExpressionAttributeNames: { "#owner": "owner" }
+        };
+        const res = await this.dbClient.query(query).promise();
+        const addressList = res.Items as LinkAddress[];
+        return addressList.map(address => address.address);
+    }
 
     async createAddress(linkaddress: string, ownerAddress: string) {
         const isExist = await this.checkExistLink(linkaddress);
@@ -20,35 +33,17 @@ export class AddressRepository implements AddressUsecase {
         await this.dbClient.delete(query).promise();
         const query2 = new Link(linkaddress).keyQuery;
         await this.dbClient.delete(query2).promise();
-    }
+    };
 
     async checkExistLink(linkaddress: string) {
         const query = new LinkAddress(linkaddress).keyQuery;
         const res = await this.dbClient.get(query).promise();
         return !!res.Item;
-    }
+    };
 
     async getOwner(linkAddress: string) {
         const linkaddress = await this.dbClient.get(new LinkAddress(linkAddress).keyQuery).promise();
         if (!linkaddress.Item) throw new Error(`not found linkaddress ${linkAddress}`);
         return (linkaddress.Item as LinkAddress).owner;
     };
-
-    async linkAddress(linkAddress: string, accountAddress: string, symbol: string) {
-        const isExist = await this.checkExistLink(linkAddress);
-        if (!isExist) throw new Error(`not found linkaddress ${linkAddress}`);
-        await this.unlinkAddress(linkAddress, symbol);
-        await this.dbClient.put(new Link(linkAddress, symbol, accountAddress).putQuery).promise();
-    }
-
-    async getAddress(linkaddress: string, symbol: string) {
-        const address = await this.dbClient.get(new Link(linkaddress, symbol).keyQuery).promise();
-        if (!address.Item) throw new Error(`not linked address : ${linkaddress}, symbol : ${symbol}`);
-        return (address.Item as Link).account;
-    }
-
-    async unlinkAddress(linkAddress: string, symbol: string) {
-        await this.dbClient.delete(new Link(linkAddress, symbol).keyQuery).promise();
-    }
-
 }
