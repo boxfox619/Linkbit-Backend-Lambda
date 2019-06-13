@@ -1,4 +1,4 @@
-import { GetItemInput, PutItemInput, BatchGetItemInput } from "aws-sdk/clients/dynamodb";
+import { GetItemInput, PutItemInput } from "aws-sdk/clients/dynamodb";
 
 export abstract class Table {
 
