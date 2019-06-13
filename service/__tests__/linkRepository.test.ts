@@ -2,15 +2,16 @@ import { AddressRepository } from '../addressRepository';
 import { LinkRepository } from '../linkRepository';
 import sinon from 'sinon';
 import AWS from 'aws-sdk';
-import { createDBClient, Link } from '../../models/dynamo';
+import { createDBClient, Link, LinkAddress } from '../../models/dynamo';
 
-describe('addressRepository', () => {
+describe('linkRepository', () => {
     const linkAddress = 'linkAddress';
     const owner = 'owner';
     const testAddresss = 'testAddress';
     const symbol = 'eth';
     const sandbox = sinon.createSandbox();
     const getStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'get');
+    const batchGetStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'batchGet');
     const deleteStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'delete');
     const putStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'put');
     putStub.returns({ promise: () => ({}) });
@@ -26,7 +27,22 @@ describe('addressRepository', () => {
             }
         }
     });
-    const addressRepo = new AddressRepository(createDBClient());
+    batchGetStub.returns({
+        promise: () => {
+            return {
+                Responses: {
+                    [Link.TableName]: [
+                        new Link('link-address', 'eth', owner),
+                        new Link('link-address', 'eos', owner),
+                        new Link('link-address2', 'eth', owner)
+                    ]
+                }
+            }
+        }
+    });
+    const addressRepo = sinon.createStubInstance(AddressRepository);
+    addressRepo.checkExistLink.returns(true);
+    addressRepo.getAddressList.returns([linkAddress]);
     const linkRepo = new LinkRepository(createDBClient(), addressRepo);
 
     it('should unlink address well', async () => {
@@ -60,5 +76,14 @@ describe('addressRepository', () => {
         expect(getQuery.TableName).toBe(Link.TableName);
         expect(getQuery.Key.address).toBe(linkAddress);
         expect(getQuery.Key.symbol).toBe(symbol.toUpperCase());
+    });
+
+    it('should get link address map well', async () => {
+        const addressMaps = await linkRepo.getAddressMap(owner);
+        expect(addressMaps).toBeDefined();
+        const lastCall = batchGetStub.getCall(batchGetStub.getCalls().length - 1);
+        const query = lastCall.args[0];
+        expect(query).toBeDefined();
+        expect(query).toEqual(new Link(linkAddress).batchQuery);
     });
 }); 

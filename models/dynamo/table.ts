@@ -1,4 +1,4 @@
-import { GetItemInput, PutItemInput } from "aws-sdk/clients/dynamodb";
+import { GetItemInput, PutItemInput, BatchGetItemInput } from "aws-sdk/clients/dynamodb";
 
 export abstract class Table {
 
@@ -20,6 +20,16 @@ export abstract class Table {
         return {
             TableName: this.tableName,
             Key: this.getMap()
+        }
+    }
+
+    get batchQuery(): BatchGetItemInput {
+        return {
+            RequestItems: {
+                [this.tableName]: {
+                    Keys: [this.getMap()]
+                }
+            }
         }
     }
 

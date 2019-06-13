@@ -11,6 +11,7 @@ describe('addressRepository', () => {
     const getStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'get');
     const deleteStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'delete');
     const putStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'put');
+    const batchGetStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'batchGet');
     putStub.returns({ promise: () => ({}) });
     deleteStub.returns({ promise: () => ({}) });
     getStub.returns({
@@ -21,6 +22,18 @@ describe('addressRepository', () => {
                 return { Item: new LinkAddress(linkAddress2, owner) };
             } else {
                 return {};
+            }
+        }
+    });
+    batchGetStub.returns({
+        promise: () => {
+            return {
+                Responses: {
+                    [LinkAddress.TableName]: [
+                        new LinkAddress('link-address', owner),
+                        new LinkAddress('link-address2', owner)
+                    ]
+                }
             }
         }
     });
@@ -54,6 +67,11 @@ describe('addressRepository', () => {
         expect(exist1).toBeTruthy();
         const exist2 = await addressRepo.checkExistLink(linkAddress1);
         expect(exist2).toBeFalsy();
+    });
+
+    it('should get address list well', async () => {
+        const addressList = await addressRepo.getAddressList(owner);
+        expect(addressList.length).toBe(2);
     });
 
 }); 

@@ -1,23 +1,16 @@
 import * as AWS from 'aws-sdk';
 import { LinkAddress, Link } from '../models/dynamo';
-import { AddressUsecase } from '../domain/address';
+import { AddressUsecase } from '../models/domain/address';
 
 export class AddressRepository implements AddressUsecase {
 
     constructor(private dbClient: AWS.DynamoDB.DocumentClient) { }
 
     async getAddressList(ownerAddress: string) {
-        const query = new LinkAddress(undefined, ownerAddress).keyQuery;
-        const addressList = [];
-        let response: AWS.Response<AWS.DynamoDB.DocumentClient.GetItemOutput, AWS.AWSError>;
-        let nextPage: AWS.Request<AWS.DynamoDB.DocumentClient.GetItemOutput, AWS.AWSError> | void = this.dbClient.get(query);
-        while ((!!nextPage || (response.hasNextPage && (nextPage = response.nextPage())))) {
-            if (!nextPage) { break; }
-            const tmpResponse = await nextPage.promise();
-            response = tmpResponse.$response;
-            response.data.foreach(res => addressList.push(res.address));
-        };
-        return addressList;
+        const query = new LinkAddress(undefined, ownerAddress).batchQuery;
+        const res = await this.dbClient.batchGet(query).promise();
+        const addressList = res.Responses[LinkAddress.TableName] as LinkAddress[];
+        return addressList.map(address => address.address);
     }
 
     async createAddress(linkaddress: string, ownerAddress: string) {

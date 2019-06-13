@@ -12,20 +12,22 @@ export class LinkRepository implements LinkUsecase {
 
     async getAddressMap(ownerAddress: string) {
         const addressList = await this.addressRepo.getAddressList(ownerAddress);
-        const promiseList = addressList.map(async (address) => {
-            const query = new Link(address).keyQuery;
-            const addressMap = new AddressMap(ownerAddress, address);
-            let response: AWS.Response<AWS.DynamoDB.DocumentClient.GetItemOutput, AWS.AWSError>;
-            let nextPage: AWS.Request<AWS.DynamoDB.DocumentClient.GetItemOutput, AWS.AWSError> | void = this.dbClient.get(query);
-            while ((!!nextPage || (response.hasNextPage && (nextPage = response.nextPage())))) {
-                if (!nextPage) { break; }
-                const tmpResponse = await nextPage.promise();
-                response = tmpResponse.$response;
-                response.data.foreach((link: Link) => addressMap.accountAddressMap[link.symbol] = link.account);
-            };
-            return addressMap;
-        });
-        return await Promise.all(promiseList);
+        const query = {
+            RequestItems: {
+                [Link.TableName]: {
+                    Keys: addressList.map(address => new Link(address).keyQuery.Key)
+                }
+            }
+        };
+        const res = await this.dbClient.batchGet(query).promise();
+        const linkList = res.Responses[Link.TableName] as Link[];
+        linkList.reduce((map, link) => {
+            const linkMap = map[link.address] || {};
+            linkMap[link.symbol] = link.account;
+            map[link.address] = linkMap;
+            return linkMap;
+        }, {});
+        return linkList;
     };
 
     async linkAddress(linkAddress: string, accountAddress: string, symbol: string) {
