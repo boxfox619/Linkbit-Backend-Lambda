@@ -1,4 +1,4 @@
-import { CertificationUsecase } from '../domain/certification';
+import { CertificationUsecase } from '../models/domain';
 import { Token } from '../models/dynamo';
 import ECIES from 'eth-ecies';
 import * as eutil from 'ethereumjs-util';

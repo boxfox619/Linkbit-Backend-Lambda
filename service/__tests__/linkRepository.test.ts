@@ -3,6 +3,7 @@ import { LinkRepository } from '../linkRepository';
 import sinon from 'sinon';
 import AWS from 'aws-sdk';
 import { createDBClient, Link, LinkAddress } from '../../models/dynamo';
+import { AddressMap } from '../../models/entity';
 
 describe('linkRepository', () => {
     const linkAddress = 'linkAddress';
@@ -11,7 +12,7 @@ describe('linkRepository', () => {
     const symbol = 'eth';
     const sandbox = sinon.createSandbox();
     const getStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'get');
-    const batchGetStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'batchGet');
+    const queryStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'query');
     const deleteStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'delete');
     const putStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'put');
     putStub.returns({ promise: () => ({}) });
@@ -27,16 +28,14 @@ describe('linkRepository', () => {
             }
         }
     });
-    batchGetStub.returns({
+    queryStub.returns({
         promise: () => {
             return {
-                Responses: {
-                    [Link.TableName]: [
-                        new Link('link-address', 'eth', owner),
-                        new Link('link-address', 'eos', owner),
-                        new Link('link-address2', 'eth', owner)
-                    ]
-                }
+                Items: [
+                    new Link('link-address', 'eth', owner),
+                    new Link('link-address', 'eos', owner),
+                    new Link('link-address2', 'eth', owner)
+                ]
             }
         }
     });
@@ -81,9 +80,15 @@ describe('linkRepository', () => {
     it('should get link address map well', async () => {
         const addressMaps = await linkRepo.getAddressMap(owner);
         expect(addressMaps).toBeDefined();
-        const lastCall = batchGetStub.getCall(batchGetStub.getCalls().length - 1);
+        expect(addressMaps.length).toBe(1);
+        expect(addressMaps[0]).toEqual(new AddressMap(owner, linkAddress, { EOS: owner, ETH: owner }));
+        const lastCall = queryStub.getCall(queryStub.getCalls().length - 1);
         const query = lastCall.args[0];
-        expect(query).toBeDefined();
-        expect(query).toEqual(new Link(linkAddress).batchQuery);
+        const expectedQuery = {
+            TableName: Link.TableName,
+            KeyConditionExpression: 'address = :address',
+            ExpressionAttributeValues: { ':address': linkAddress },
+        };
+        expect(query).toEqual(expectedQuery);
     });
 }); 

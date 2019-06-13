@@ -11,23 +11,22 @@ export class LinkRepository implements LinkUsecase {
     ) { }
 
     async getAddressMap(ownerAddress: string) {
+        const addressMapList = [];
         const addressList = await this.addressRepo.getAddressList(ownerAddress);
-        const query = {
-            RequestItems: {
-                [Link.TableName]: {
-                    Keys: addressList.map(address => new Link(address).keyQuery.Key)
-                }
-            }
-        };
-        const res = await this.dbClient.batchGet(query).promise();
-        const linkList = res.Responses[Link.TableName] as Link[];
-        linkList.reduce((map, link) => {
-            const linkMap = map[link.address] || {};
-            linkMap[link.symbol] = link.account;
-            map[link.address] = linkMap;
-            return linkMap;
-        }, {});
-        return linkList;
+        for(const address of addressList) {
+            const query = {
+                TableName: Link.TableName,
+                KeyConditionExpression: 'address = :address',
+                ExpressionAttributeValues: { ':address': address },
+            };
+            const res = await this.dbClient.query(query).promise();
+            const addressMap = new AddressMap(ownerAddress, address);
+            (res.Items as Link[]).forEach(link => {
+                addressMap.accountAddressMap[link.symbol] = link.account;
+            });
+            addressMapList.push(addressMap);
+        }
+        return addressMapList;
     };
 
     async linkAddress(linkAddress: string, accountAddress: string, symbol: string) {

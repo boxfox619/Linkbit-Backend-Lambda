@@ -1,10 +1,8 @@
 import 'source-map-support/register';
+import LinkHandler from '../models/handler/linkHandler';
 import { middleware } from '../util/middleware';
 import { response } from '../models/lambda';
-import { CertificationUsecase } from '../domain/certification';
-import { LinkUsecase } from '../domain/link';
-import { AddressUsecase } from '../domain/address';
-import LinkHandler from '../models/handler/linkHandler';
+import { LinkUsecase, AddressUsecase, CertificationUsecase } from '../models/domain';
 
 const handlers = (addressRepo: AddressUsecase, linkRepo: LinkUsecase, certRepo: CertificationUsecase): LinkHandler => ({
     getAddressMap: middleware(
@@ -15,7 +13,7 @@ const handlers = (addressRepo: AddressUsecase, linkRepo: LinkUsecase, certRepo: 
                 const valid = await certRepo.checkValidation(ownerAddress, token);
                 if (!valid) return response(400, 'invalid certification token');
                 const address = await linkRepo.getAddressMap(ownerAddress);
-                return response(200, { address });
+                return response(200, address);
             } catch (e) {
                 console.error(e);
                 return response(404, e.message);

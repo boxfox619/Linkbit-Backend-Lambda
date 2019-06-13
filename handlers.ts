@@ -1,7 +1,5 @@
-import { AddressRepository } from './service/addressRepository';
-import { LinkRepository } from './service/linkRepository';
-import { CertificationRepository } from './service/certificationRepository';
-import { createDBClient } from './models';
+import { CertificationRepository, LinkRepository, AddressRepository } from './service';
+import { createDBClient } from './models/dynamo';
 import AddressHanders from "./handler/address";
 import LinkHanders from "./handler/link";
 import CertificationHanders from './handler/certification';

@@ -7,9 +7,15 @@ export class AddressRepository implements AddressUsecase {
     constructor(private dbClient: AWS.DynamoDB.DocumentClient) { }
 
     async getAddressList(ownerAddress: string) {
-        const query = new LinkAddress(undefined, ownerAddress).batchQuery;
-        const res = await this.dbClient.batchGet(query).promise();
-        const addressList = res.Responses[LinkAddress.TableName] as LinkAddress[];
+        const query = {
+            TableName: LinkAddress.TableName,
+            IndexName: 'owner-index',
+            KeyConditionExpression: '#owner = :owner_id',
+            ExpressionAttributeValues: { ':owner_id': ownerAddress },
+            ExpressionAttributeNames: { "#owner": "owner" }
+        };
+        const res = await this.dbClient.query(query).promise();
+        const addressList = res.Items as LinkAddress[];
         return addressList.map(address => address.address);
     }
 

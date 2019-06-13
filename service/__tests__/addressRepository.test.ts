@@ -11,7 +11,7 @@ describe('addressRepository', () => {
     const getStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'get');
     const deleteStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'delete');
     const putStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'put');
-    const batchGetStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'batchGet');
+    const queryStub = sandbox.stub(AWS.DynamoDB.DocumentClient.prototype, 'query');
     putStub.returns({ promise: () => ({}) });
     deleteStub.returns({ promise: () => ({}) });
     getStub.returns({
@@ -25,15 +25,13 @@ describe('addressRepository', () => {
             }
         }
     });
-    batchGetStub.returns({
+    queryStub.returns({
         promise: () => {
             return {
-                Responses: {
-                    [LinkAddress.TableName]: [
-                        new LinkAddress('link-address', owner),
-                        new LinkAddress('link-address2', owner)
-                    ]
-                }
+                Items: [
+                    new LinkAddress('link-address', owner),
+                    new LinkAddress('link-address2', owner)
+                ]
             }
         }
     });

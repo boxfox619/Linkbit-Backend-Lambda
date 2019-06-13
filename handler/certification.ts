@@ -1,7 +1,7 @@
 import 'source-map-support/register';
 import { middleware } from '../util/middleware';
 import { response } from '../models/lambda';
-import { CertificationUsecase } from '../domain/certification';
+import { CertificationUsecase } from '../models/domain';
 import CertificationHandler from '../models/handler/certificationHander';
 
 const handlers = (certRepo: CertificationUsecase): CertificationHandler => ({

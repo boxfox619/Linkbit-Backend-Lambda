@@ -23,16 +23,6 @@ export abstract class Table {
         }
     }
 
-    get batchQuery(): BatchGetItemInput {
-        return {
-            RequestItems: {
-                [this.tableName]: {
-                    Keys: [this.getMap()]
-                }
-            }
-        }
-    }
-
     get putQuery(): PutItemInput {
         return {
             TableName: this.tableName,
