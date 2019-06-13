@@ -1,12 +1,10 @@
 import LinkHanders from '../link';
-import { apiGatewayEventMock, contextMock } from '../../util/mock';
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import sinon from 'sinon';
-import { CertificationRepository } from '../../service/certificationRepository';
-import { AddressRepository } from '../../service/addressRepository';
-import { LinkRepository } from '../../service/LinkRepository';
 import { Link } from '../../models/dynamo';
 import { AddressMap } from '../../models/entity';
+import { apiGatewayEventMock, contextMock } from '../../util/mock';
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { AddressRepository, LinkRepository, CertificationRepository } from '../../service';
 
 describe('link handlers', () => {
     const addressRepo = sinon.createStubInstance(AddressRepository);

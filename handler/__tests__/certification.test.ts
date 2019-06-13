@@ -1,8 +1,8 @@
+import sinon from 'sinon';
 import CertificationHandlers from '../certification';
 import { apiGatewayEventMock, contextMock } from '../../util/mock';
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
-import sinon from 'sinon';
-import { CertificationRepository } from '../../service/certificationRepository';
+import { CertificationRepository } from '../../service';
 
 describe('certification handler', () => {
     const certRepo = sinon.createStubInstance(CertificationRepository);

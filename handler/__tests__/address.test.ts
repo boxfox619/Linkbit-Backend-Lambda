@@ -1,10 +1,9 @@
+import sinon from 'sinon';
 import AddressHanders from '../address';
+import { Token } from '../../models/dynamo';
 import { apiGatewayEventMock, contextMock } from '../../util/mock';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { Token } from '../../models/dynamo';
-import sinon from 'sinon';
-import { CertificationRepository } from '../../service/certificationRepository';
-import { AddressRepository } from '../../service/addressRepository';
+import { CertificationRepository, AddressRepository } from '../../service';
 
 describe('address handlers', () => {
     const address = 'address';
@@ -25,7 +24,7 @@ describe('address handlers', () => {
             expect(body.message).toBeDefined();
             expect(body.message).toBe('invalid certification token');
         });
-    
+
         it('should return status code 200 and database update', async () => {
             certRepo.checkValidation.returns(true);
             const linkaddress = 'test-link-address';
@@ -39,7 +38,7 @@ describe('address handlers', () => {
             expect(createAddressCall.args[0]).toBe(linkaddress);
             expect(createAddressCall.args[1]).toBe(token.address);
         });
-    
+
         it('should return status code 400 with error', async () => {
             const event: APIGatewayProxyEvent = apiGatewayEventMock();
             const res = await addressHanders.createAddress(event, contextMock(), () => { });
@@ -50,7 +49,7 @@ describe('address handlers', () => {
             expect(body.message).toBe('missing body keys ownerAddress,token,linkaddress');
         });
     });
-    
+
     describe('delete address handler', () => {
         it('should return status code 400 with message', async () => {
             certRepo.checkValidation.returns(false);
@@ -63,7 +62,7 @@ describe('address handlers', () => {
             expect(body.message).toBeDefined();
             expect(body.message).toBe('invalid certification token');
         });
-    
+
         it('should return status code 200 and database update', async () => {
             certRepo.checkValidation.returns(true);
             const linkaddress = 'test-link-address';
@@ -76,7 +75,7 @@ describe('address handlers', () => {
             const deleteAddressCall = addressRepo.deleteAddress.getCall(0);
             expect(deleteAddressCall.args[0]).toBe(linkaddress);
         });
-    
+
         it('should return status code 400 with error', async () => {
             const event: APIGatewayProxyEvent = apiGatewayEventMock();
             const res = await addressHanders.deleteAddress(event, contextMock(), () => { });
