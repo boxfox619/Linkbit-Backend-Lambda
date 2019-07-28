@@ -1,7 +1,7 @@
 {
-  "name": "linkbit-backend",
+  "name": "beer-shop-backend",
   "version": "1.0.0",
-  "description": "Linkbit aws lambda project",
+  "description": "Beer shop mocks",
   "main": "handler.js",
   "scripts": {
     "test": "jest",

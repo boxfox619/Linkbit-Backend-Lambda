@@ -1,3 +1,3 @@
-export { AddressRepository } from './addressRepository';
-export { LinkRepository } from './linkRepository';
-export { CertificationRepository } from './certificationRepository';
+export * from './mock/ItemRepository';
+export * from './mock/PurchaseRepository';
+export * from './mock/TagRepository';
