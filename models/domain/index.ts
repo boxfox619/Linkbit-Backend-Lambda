@@ -1,3 +1,5 @@
-export { AddressUsecase } from './address';
-export { CertificationUsecase } from './certification';
-export { LinkUsecase } from './link';
+export interface Usecase { }
+
+export * from './ItemUsecase';
+export * from './PurchaseUsecase';
+export * from './TagUsecase';
