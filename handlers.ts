@@ -1,20 +1,17 @@
-import { CertificationRepository, LinkRepository, AddressRepository } from './service';
-import { createDBClient } from './models/dynamo';
-import AddressHanders from "./handler/address";
-import LinkHanders from "./handler/link";
-import CertificationHanders from './handler/certification';
+import { ItemRepository, PurchaseRepository, TagRepository } from './service';
+import ItemHandlers from "./handler/item";
+import PurchaseHandlers from "./handler/purchase";
+import TagHanders from './handler/tag';
 
-export { hello } from './handler/hello';
+const itemsRepo = new ItemRepository();
+const purchaseRepo = new PurchaseRepository();
+const tagRepo = new TagRepository();
 
-const dbClient = createDBClient();
-const addressRepo = new AddressRepository(dbClient);
-const certRepo = new CertificationRepository(dbClient);
-const linkRepo = new LinkRepository(dbClient, addressRepo);
+const itemHandlers = ItemHandlers(itemsRepo);
+const purchaseHandlers = PurchaseHandlers(purchaseRepo);
+const tagHandlers = TagHanders(tagRepo);
 
-const addressHanders = AddressHanders(addressRepo, certRepo);
-const certificationHanders = CertificationHanders(certRepo);
-const linkHanders = LinkHanders(addressRepo, linkRepo, certRepo);
-
-export const { deleteAddress, createAddress } = addressHanders
-export const { getAddressMap, getLinkAddress, linkAddress, unlinkAddress } = linkHanders
-export const { getCertText } = certificationHanders
+export const { getItems } = itemHandlers;
+export const { getTags } = tagHandlers;
+export const { purchase } = purchaseHandlers;
+export { corsHandler } from './handler/cors';

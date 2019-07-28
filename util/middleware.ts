@@ -13,7 +13,7 @@ export interface RequiredParams {
     body?: string[]
 }
 
-export const middleware = <T extends Parameter>(handler:(param: T) => Promise<APIGatewayProxyResult>, required: RequiredParams = {}): APIGatewayProxyHandler => {
+export const middleware = <T extends Parameter>(handler: (param: T) => Promise<APIGatewayProxyResult>, required: RequiredParams = {}): APIGatewayProxyHandler => {
     return async (event) => {
         const queryParams = event.queryStringParameters || {};
         const pathParams = event.pathParameters || {};
@@ -25,7 +25,13 @@ export const middleware = <T extends Parameter>(handler:(param: T) => Promise<AP
         if (missingQueryParams.length + missingPathParams.length + missingBodyParams.length > 0) {
             return missingParameters(missingQueryParams, missingPathParams, missingBodyParams);
         }
-        return await handler(param as T);
+        const response = await handler(param as T);
+        response.headers = {};
+        response.headers['Access-Control-Allow-Origin'] = event.headers.origin;
+        response.headers['Access-Control-Allow-Credentials'] = 'true';
+        response.headers['Access-Control-Allow-Methods'] = "POST,GET,OPTIONS,DELETE,PUT";
+        response.headers['Access-Control-Allow-Headers'] = "x-requested-with,content-type";
+        return response;
     }
 }
 
