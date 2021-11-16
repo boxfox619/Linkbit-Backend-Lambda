@@ -9,7 +9,7 @@
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls"
   },
   "dependencies": {
-    "aws-sdk": "^2.453.0",
+    "aws-sdk": "^2.814.0",
     "eth-ecies": "^1.0.3",
     "source-map-support": "^0.5.10",
     "ethereumjs-util": "^6.1.0"
